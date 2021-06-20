@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="robots" content="noodp" />
+        <meta http-equiv="X-UA-Compatible" content="IE=edge, chrome=1">
+        <title>Pytorch Tensor 实现解析 - ykddd&#39;s blog</title><meta name="Description" content=""><meta property="og:title" content="Pytorch Tensor 实现解析" />
+<meta property="og:description" content="前言 本文将解析Pytorch C&#43;&#43; core中的tensor实现 intrusive_ptr c10/util/intrusive_ptr.h 首先先介绍的是intrusive_ptr，一种侵入式的指针。 首先先看这种场景 int" />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="http://example.org/posts/post3/pytorch_tensor_impl/" /><meta property="og:image" content="http://example.org/logo.png"/><meta property="article:section" content="posts" />
+<meta property="article:published_time" content="2021-06-20T15:10:26&#43;08:00" />
+<meta property="article:modified_time" content="2021-06-20T15:10:26&#43;08:00" />
+
+<meta name="twitter:card" content="summary_large_image"/>
+<meta name="twitter:image" content="http://example.org/logo.png"/>
+
+<meta name="twitter:title" content="Pytorch Tensor 实现解析"/>
+<meta name="twitter:description" content="前言 本文将解析Pytorch C&#43;&#43; core中的tensor实现 intrusive_ptr c10/util/intrusive_ptr.h 首先先介绍的是intrusive_ptr，一种侵入式的指针。 首先先看这种场景 int"/>
+<meta name="application-name" content="ykddd&#39;s blog">
+<meta name="apple-mobile-web-app-title" content="ykddd&#39;s blog"><link rel="shortcut icon" type="image/x-icon" href="/favicon.ico" />
+        <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+        <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png"><link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png"><link rel="manifest" href="/site.webmanifest"><link rel="canonical" href="http://example.org/posts/post3/pytorch_tensor_impl/" /><link rel="prev" href="http://example.org/posts/post2/%E9%9D%9Egpu%E5%90%8E%E7%AB%AFpytorch%E9%80%82%E9%85%8D/" /><link rel="stylesheet" href="/lib/normalize/normalize.min.css"><link rel="stylesheet" href="/css/style.min.css"><link rel="stylesheet" href="/lib/fontawesome-free/all.min.css"><link rel="stylesheet" href="/lib/animate/animate.min.css"><script type="application/ld+json">
+    {
+        "@context": "http://schema.org",
+        "@type": "BlogPosting",
+        "headline": "Pytorch Tensor 实现解析",
+        "inLanguage": "zh-CN",
+        "mainEntityOfPage": {
+            "@type": "WebPage",
+            "@id": "http:\/\/example.org\/posts\/post3\/pytorch_tensor_impl\/"
+        },"genre": "posts","keywords": "Pytorch, Pytorch C\u002b\u002b core","wordcount":  1294 ,
+        "url": "http:\/\/example.org\/posts\/post3\/pytorch_tensor_impl\/","datePublished": "2021-06-20T15:10:26+08:00","dateModified": "2021-06-20T15:10:26+08:00","publisher": {
+            "@type": "Organization",
+            "name": "ykddd"},"author": {
+                "@type": "Person",
+                "name": "ykddd"
+            },"description": ""
+    }
+    </script></head>
+    <body header-desktop="fixed" header-mobile="auto"><script type="text/javascript">(window.localStorage && localStorage.getItem('theme') ? localStorage.getItem('theme') === 'dark' : ('auto' === 'auto' ? window.matchMedia('(prefers-color-scheme: dark)').matches : 'auto' === 'dark')) && document.body.setAttribute('theme', 'dark');</script>
+
+        <div id="mask"></div><div class="wrapper"><header class="desktop" id="header-desktop">
+    <div class="header-wrapper">
+        <div class="header-title">
+            <a href="/" title="ykddd&#39;s blog"><span class="header-title-pre"><i class='fas fa-fish'></i></span><span id="id-1" class="typeit"></span></a>
+        </div>
+        <div class="menu">
+            <div class="menu-inner"><a class="menu-item" href="/posts/"><i class='fas fa-book-open'></i> 文章 </a><a class="menu-item" href="/about/"><i class='fas fa-address-book'></i> 关于 </a><span class="menu-item delimiter"></span><a href="javascript:void(0);" class="menu-item theme-switch" title="切换主题">
+                    <i class="fas fa-adjust fa-fw"></i>
+                </a>
+            </div>
+        </div>
+    </div>
+</header><header class="mobile" id="header-mobile">
+    <div class="header-container">
+        <div class="header-wrapper">
+            <div class="header-title">
+                <a href="/" title="ykddd&#39;s blog"><span class="header-title-pre"><i class='fas fa-fish'></i></span><span id="id-2" class="typeit"></span></a>
+            </div>
+            <div class="menu-toggle" id="menu-toggle-mobile">
+                <span></span><span></span><span></span>
+            </div>
+        </div>
+        <div class="menu" id="menu-mobile"><a class="menu-item" href="/posts/" title=""><i class='fas fa-book-open'></i>文章</a><a class="menu-item" href="/about/" title=""><i class='fas fa-address-book'></i>关于</a><a href="javascript:void(0);" class="menu-item theme-switch" title="切换主题">
+                <i class="fas fa-adjust fa-fw"></i>
+            </a></div>
+    </div>
+</header>
+<div class="search-dropdown desktop">
+    <div id="search-dropdown-desktop"></div>
+</div>
+<div class="search-dropdown mobile">
+    <div id="search-dropdown-mobile"></div>
+</div>
+<main class="main">
+                <div class="container"><div class="toc" id="toc-auto">
+            <h2 class="toc-title">目录</h2>
+            <div class="toc-content" id="toc-content-auto"></div>
+        </div><article class="page single"><h1 class="single-title animated flipInX">Pytorch Tensor 实现解析</h1><div class="post-meta">
+            <div class="post-meta-line"><span class="post-author"><a href="/" title="Author" rel=" author" class="author"><i class="fas fa-user-circle fa-fw"></i>ykddd</a></span></div>
+            <div class="post-meta-line"><i class="far fa-calendar-alt fa-fw"></i>&nbsp;<time datetime="2021-06-20">2021-06-20</time>&nbsp;<i class="fas fa-pencil-alt fa-fw"></i>&nbsp;约 1294 字&nbsp;
+                <i class="far fa-clock fa-fw"></i>&nbsp;预计阅读 3 分钟&nbsp;</div>
+        </div><div class="details toc" id="toc-static"  kept="">
+                <div class="details-summary toc-title">
+                    <span>目录</span>
+                    <span><i class="details-icon fas fa-angle-right"></i></span>
+                </div>
+                <div class="details-content toc-content" id="toc-content-static"><nav id="TableOfContents">
+  <ul>
+    <li><a href="#intrusive_ptr">intrusive_ptr</a></li>
+    <li><a href="#storageimpl">StorageImpl</a></li>
+    <li><a href="#storage">Storage</a></li>
+    <li><a href="#tensorimpl">TensorImpl</a></li>
+  </ul>
+</nav></div>
+            </div><div class="content" id="content"><h1 id="前言">前言</h1>
+<p>本文将解析Pytorch C++ core中的tensor实现</p>
+<h2 id="intrusive_ptr">intrusive_ptr</h2>
+<p>c10/util/intrusive_ptr.h<br>
+首先先介绍的是intrusive_ptr，一种侵入式的指针。
+首先先看这种场景</p>
+<div class="highlight"><pre class="chroma"><code class="language-C++" data-lang="C++"><span class="kt">int</span> <span class="o">*</span><span class="n">a</span> <span class="o">=</span> <span class="k">new</span> <span class="kt">int</span><span class="p">(</span><span class="mi">5</span><span class="p">);</span>
+<span class="n">std</span><span class="o">::</span><span class="n">shared_ptr</span> <span class="n">ptr1</span><span class="p">(</span><span class="n">a</span><span class="p">);</span>
+<span class="n">std</span><span class="o">::</span><span class="n">shared_ptr</span> <span class="n">ptr2</span><span class="p">(</span><span class="n">a</span><span class="p">);</span>
+</code></pre></div><p>当你利用同一个裸指针去初始化两个智能指针时，在这两个智能指针被析构时，这个裸指针就被double free了。
+那么我们来看intrusive_ptr如何解决这个问题。</p>
+<div class="highlight"><pre class="chroma"><code class="language-C++" data-lang="C++"><span class="k">class</span> <span class="nc">C10_API</span> <span class="n">intrusive_ptr_target</span> <span class="p">{</span>
+  <span class="k">mutable</span> <span class="n">std</span><span class="o">::</span><span class="n">atomic</span><span class="o">&lt;</span><span class="n">size_t</span><span class="o">&gt;</span> <span class="n">refcount_</span><span class="p">;</span>
+  <span class="k">mutable</span> <span class="n">std</span><span class="o">::</span><span class="n">atomic</span><span class="o">&lt;</span><span class="n">size_t</span><span class="o">&gt;</span> <span class="n">weakcount_</span><span class="p">;</span>
+
+  <span class="k">template</span> <span class="o">&lt;</span><span class="k">typename</span> <span class="n">T</span><span class="p">,</span> <span class="k">typename</span> <span class="n">NullType</span><span class="o">&gt;</span>
+  <span class="k">friend</span> <span class="k">class</span> <span class="nc">intrusive_ptr</span><span class="p">;</span>
+  <span class="k">friend</span> <span class="kr">inline</span> <span class="kt">void</span> <span class="n">raw</span><span class="o">::</span><span class="n">intrusive_ptr</span><span class="o">::</span><span class="n">incref</span><span class="p">(</span><span class="n">intrusive_ptr_target</span><span class="o">*</span> <span class="n">self</span><span class="p">);</span>
+
+  <span class="k">template</span> <span class="o">&lt;</span><span class="k">typename</span> <span class="n">T</span><span class="p">,</span> <span class="k">typename</span> <span class="n">NullType</span><span class="o">&gt;</span>
+  <span class="k">friend</span> <span class="k">class</span> <span class="nc">weak_intrusive_ptr</span><span class="p">;</span>
+  <span class="k">friend</span> <span class="kr">inline</span> <span class="kt">void</span> <span class="n">raw</span><span class="o">::</span><span class="n">weak_intrusive_ptr</span><span class="o">::</span><span class="n">incref</span><span class="p">(</span>
+      <span class="n">intrusive_ptr_target</span><span class="o">*</span> <span class="n">self</span><span class="p">);</span>
+<span class="p">}</span>
+</code></pre></div><p>首先定义一个intrusive_ptr_target类，假设T类型的class需要被intrusive_ptr管理，那么首先他需要继承这个类，即</p>
+<div class="highlight"><pre class="chroma"><code class="language-C++" data-lang="C++"><span class="k">class</span> <span class="nc">T</span> <span class="o">:</span> <span class="k">public</span> <span class="n">intrusive_ptr_target</span><span class="p">{}</span>
+</code></pre></div><p>那么该类T就继承了父类的两个原子类型的成员变量refcount_与weakcount_。分别表示该类T的实例被多少个intrusive_ptr指向和多少个weak_intrusive_ptr指向。</p>
+<p>由于这两个成员变量是私有成员变量，那么为了让intrusive_ptr和weak_intrusive_ptr能够访问这两个变量，这两个类以及这两个增加引用数的函数被申明乘友元类以及友元函数。</p>
+<div class="highlight"><pre class="chroma"><code class="language-C++" data-lang="C++"><span class="k">auto</span> <span class="n">in_ptr</span> <span class="o">=</span> <span class="n">intrusive_ptr</span><span class="p">(</span><span class="n">TTarget</span><span class="o">*</span> <span class="n">target</span><span class="p">)</span>
+</code></pre></div><p>假设我们调用了这个一条语句，先不管正确性，通过构造函数，in_ptr保存了一个TTarget*类型的裸指针，并且他可以去获取裸指针继承自intrusive_ptr_target而得来的两个成员变量，refcount_与weakcount_。在intrusive_ptr的拷贝构造函数中，他需要去将 TTarget* target的refcount_加1，在移动拷贝构造中，不需要加1。想一想现在是否就解决了shared_ptr的double free问题。<br>
+那么在intrusive_ptr_的析构函数中，他需要去判断refcount_是否为0，为0，则去调用target_的指定函数，并且free这个指针。不为0，则将自己的target置为空。
+关键函数如下：</p>
+<div class="highlight"><pre class="chroma"><code class="language-C++" data-lang="C++">  <span class="kt">void</span> <span class="nf">reset_</span><span class="p">()</span> <span class="k">noexcept</span> <span class="p">{</span>
+    <span class="k">if</span> <span class="p">(</span><span class="n">target_</span> <span class="o">!=</span> <span class="n">NullType</span><span class="o">::</span><span class="n">singleton</span><span class="p">()</span> <span class="o">&amp;&amp;</span>
+        <span class="n">detail</span><span class="o">::</span><span class="n">atomic_refcount_decrement</span><span class="p">(</span><span class="n">target_</span><span class="o">-&gt;</span><span class="n">refcount_</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">)</span> <span class="p">{</span>
+      <span class="c1">// justification for const_cast: release_resources is basically a
+</span><span class="c1"></span>      <span class="c1">// destructor and a destructor always mutates the object, even for const
+</span><span class="c1"></span>      <span class="c1">// objects. NOLINTNEXTLINE(clang-analyzer-cplusplus.NewDelete)
+</span><span class="c1"></span>      <span class="k">const_cast</span><span class="o">&lt;</span><span class="n">std</span><span class="o">::</span><span class="n">remove_const_t</span><span class="o">&lt;</span><span class="n">TTarget</span><span class="o">&gt;*&gt;</span><span class="p">(</span><span class="n">target_</span><span class="p">)</span><span class="o">-&gt;</span><span class="n">release_resources</span><span class="p">();</span>
+
+      <span class="c1">// See comment above about weakcount. As long as refcount&gt;0,
+</span><span class="c1"></span>      <span class="c1">// weakcount is one larger than the actual number of weak references.
+</span><span class="c1"></span>      <span class="c1">// So we need to decrement it here.
+</span><span class="c1"></span>      <span class="k">if</span> <span class="p">(</span><span class="n">target_</span><span class="o">-&gt;</span><span class="n">weakcount_</span><span class="p">.</span><span class="n">load</span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">memory_order_acquire</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span> <span class="o">||</span>
+          <span class="n">detail</span><span class="o">::</span><span class="n">atomic_weakcount_decrement</span><span class="p">(</span><span class="n">target_</span><span class="o">-&gt;</span><span class="n">weakcount_</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">)</span> <span class="p">{</span>
+        <span class="k">delete</span> <span class="n">target_</span><span class="p">;</span>
+      <span class="p">}</span>
+    <span class="p">}</span>
+    <span class="n">target_</span> <span class="o">=</span> <span class="n">NullType</span><span class="o">::</span><span class="n">singleton</span><span class="p">();</span>
+  <span class="p">}</span>
+</code></pre></div><p>理解intrusive_ptr之后，我们就可以开始解析接下来tensor相关的代码了。</p>
+<h2 id="storageimpl">StorageImpl</h2>
+<p>c10/core/StorageImpl.h</p>
+<div class="highlight"><pre class="chroma"><code class="language-C++" data-lang="C++"><span class="k">struct</span> <span class="nc">C10_API</span> <span class="n">StorageImpl</span> <span class="k">final</span> <span class="o">:</span> <span class="k">public</span> <span class="n">c10</span><span class="o">::</span><span class="n">intrusive_ptr_target</span> <span class="p">{</span>
+ <span class="k">public</span><span class="o">:</span>
+  <span class="p">....</span>
+ <span class="k">private</span><span class="o">:</span>
+  <span class="n">DataPtr</span> <span class="n">data_ptr_</span><span class="p">;</span>
+  <span class="n">size_t</span> <span class="n">size_bytes_</span><span class="p">;</span>
+  <span class="kt">bool</span> <span class="n">resizable_</span><span class="p">;</span>
+  <span class="c1">// Identifies that Storage was received from another process and doesn&#39;t have
+</span><span class="c1"></span>  <span class="c1">// local to process cuda memory allocation
+</span><span class="c1"></span>  <span class="kt">bool</span> <span class="n">received_cuda_</span><span class="p">;</span>
+  <span class="n">Allocator</span><span class="o">*</span> <span class="n">allocator_</span><span class="p">;</span>
+<span class="p">};</span>
+</code></pre></div><p>StorageImpl定义如上，可以看到StorageImpl保存了一个DataPtr，用于表示当前这块tensor的buffer处于何种device上，并且内存地址是什么，Allocator对象用于传入不同device的内存分配器。这就是Tensor隐藏在背后的存储形式。
+同时StorageImpl继承了c10::intrusive_ptr_target，说明了storageImpl可以由intrusive_ptr管理。
+其诸多方法中我们可以看到它重载了父类的release_resources函数，用于其在refcount==0时释放资源。</p>
+<div class="highlight"><pre class="chroma"><code class="language-c++" data-lang="c++"><span class="kt">void</span> <span class="nf">release_resources</span><span class="p">()</span> <span class="k">override</span> <span class="p">{</span>
+    <span class="n">data_ptr_</span><span class="p">.</span><span class="n">clear</span><span class="p">();</span>
+<span class="p">}</span>
+</code></pre></div><h2 id="storage">Storage</h2>
+<p>c10/core/Storage.h<br>
+Storage唯一的成员变量是</p>
+<div class="highlight"><pre class="chroma"><code class="language-C++" data-lang="C++"><span class="k">protected</span><span class="o">:</span>
+  <span class="n">c10</span><span class="o">::</span><span class="n">intrusive_ptr</span><span class="o">&lt;</span><span class="n">StorageImpl</span><span class="o">&gt;</span> <span class="n">storage_impl_</span><span class="p">;</span>
+</code></pre></div><p>典型的桥接模式。
+具体的接口有兴趣可以研究，就不一一赘述。</p>
+<h2 id="tensorimpl">TensorImpl</h2>
+<p>c10/core/TensorImpl.h</p>
+<p>未完待续</p>
+</div><div class="post-footer" id="post-footer">
+    <div class="post-info">
+        <div class="post-info-line">
+            <div class="post-info-mod">
+                <span>更新于 2021-06-20</span>
+            </div>
+            <div class="post-info-license"></div>
+        </div>
+        <div class="post-info-line">
+            <div class="post-info-md"></div>
+            <div class="post-info-share">
+                <span></span>
+            </div>
+        </div>
+    </div>
+
+    <div class="post-info-more">
+        <section class="post-tags"><i class="fas fa-tags fa-fw"></i>&nbsp;<a href="/tags/pytorch/">Pytorch</a>,&nbsp;<a href="/tags/pytorch-c&#43;&#43;-core/">Pytorch C&#43;&#43; core</a></section>
+        <section>
+            <span><a href="javascript:void(0);" onclick="window.history.back();">返回</a></span>&nbsp;|&nbsp;<span><a href="/">主页</a></span>
+        </section>
+    </div>
+
+    <div class="post-nav"><a href="/posts/post2/%E9%9D%9Egpu%E5%90%8E%E7%AB%AFpytorch%E9%80%82%E9%85%8D/" class="prev" rel="prev" title="非GPU后端Pytorch适配技术分析"><i class="fas fa-angle-left fa-fw"></i>非GPU后端Pytorch适配技术分析</a></div>
+</div>
+</article></div>
+            </main><footer class="footer">
+        <div class="footer-container"><div class="footer-line"><i class='fas fa-calculator'></i>------------做一个有底线的人------------<i class='fas fa-calculator'></i></div><div class="footer-line"></div>
+        </div>
+    </footer></div>
+
+        <div id="fixed-buttons"><a href="#" id="back-to-top" class="fixed-button" title="回到顶部">
+                <i class="fas fa-arrow-up fa-fw"></i>
+            </a><a href="#" id="view-comments" class="fixed-button" title="查看评论">
+                <i class="fas fa-comment fa-fw"></i>
+            </a>
+        </div><script type="text/javascript" src="/lib/smooth-scroll/smooth-scroll.min.js"></script><script type="text/javascript" src="/lib/lazysizes/lazysizes.min.js"></script><script type="text/javascript" src="/lib/clipboard/clipboard.min.js"></script><script type="text/javascript" src="/lib/typeit/typeit.min.js"></script><script type="text/javascript">window.config={"code":{"copyTitle":"复制到剪贴板","maxShownLines":10},"comment":{},"data":{"id-1":"MoYu Master","id-2":"MoYu Master"},"typeit":{"cursorChar":null,"cursorSpeed":null,"data":{"id-1":["id-1"],"id-2":["id-2"]},"duration":null,"speed":null}};</script><script type="text/javascript" src="/js/theme.min.js"></script></body>
+</html>

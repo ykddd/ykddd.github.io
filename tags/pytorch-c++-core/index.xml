@@ -1,0 +1,14 @@
+<rss xmlns:atom="http://www.w3.org/2005/Atom" version="2.0">
+    <channel>
+        <title>Pytorch C&#43;&#43; core - 标签 - ykddd&#39;s blog</title>
+        <link>http://example.org/tags/pytorch-c&#43;&#43;-core/</link>
+        <description>Pytorch C&#43;&#43; core - 标签 - ykddd&#39;s blog</description>
+        <generator>Hugo -- gohugo.io</generator><language>zh-CN</language><lastBuildDate>Sun, 20 Jun 2021 15:10:26 &#43;0800</lastBuildDate><atom:link href="http://example.org/tags/pytorch-c&#43;&#43;-core/" rel="self" type="application/rss+xml" /><item>
+    <title>Pytorch Tensor 实现解析</title>
+    <link>http://example.org/posts/post3/pytorch_tensor_impl/</link>
+    <pubDate>Sun, 20 Jun 2021 15:10:26 &#43;0800</pubDate>
+    <author>作者</author>
+    <guid>http://example.org/posts/post3/pytorch_tensor_impl/</guid>
+    <description><![CDATA[前言 本文将解析Pytorch C++ core中的tensor实现 intrusive_ptr c10/util/intrusive_ptr.h 首先先介绍的是intrusive_ptr，一种侵入式的指针。 首先先看这种场景 int]]></description>
+</item></channel>
+</rss>
