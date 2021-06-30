@@ -3,7 +3,14 @@
         <title>所有文章 - ykddd&#39;s blog</title>
         <link>http://example.org/posts/</link>
         <description>所有文章 | ykddd&#39;s blog</description>
-        <generator>Hugo -- gohugo.io</generator><language>zh-CN</language><lastBuildDate>Sun, 20 Jun 2021 15:10:26 &#43;0800</lastBuildDate><atom:link href="http://example.org/posts/" rel="self" type="application/rss+xml" /><item>
+        <generator>Hugo -- gohugo.io</generator><language>zh-CN</language><lastBuildDate>Wed, 30 Jun 2021 22:01:33 &#43;0800</lastBuildDate><atom:link href="http://example.org/posts/" rel="self" type="application/rss+xml" /><item>
+    <title>CUDA学习笔记</title>
+    <link>http://example.org/posts/post4/post/</link>
+    <pubDate>Wed, 30 Jun 2021 22:01:33 &#43;0800</pubDate>
+    <author>作者</author>
+    <guid>http://example.org/posts/post4/post/</guid>
+    <description><![CDATA[cuda学习笔记 并行计算基础知识 第一章节主要是风辰大佬的《并行算法设计与性能优化》这本书的笔记 基础概念 多核、多路、众核 同一个芯片多个核心为多]]></description>
+</item><item>
     <title>Pytorch Tensor 实现解析</title>
     <link>http://example.org/posts/post3/pytorch_tensor_impl/</link>
     <pubDate>Sun, 20 Jun 2021 15:10:26 &#43;0800</pubDate>

@@ -20,7 +20,7 @@
 <meta name="application-name" content="ykddd&#39;s blog">
 <meta name="apple-mobile-web-app-title" content="ykddd&#39;s blog"><link rel="shortcut icon" type="image/x-icon" href="/favicon.ico" />
         <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
-        <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png"><link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png"><link rel="manifest" href="/site.webmanifest"><link rel="canonical" href="http://example.org/posts/post3/pytorch_tensor_impl/" /><link rel="prev" href="http://example.org/posts/post2/%E9%9D%9Egpu%E5%90%8E%E7%AB%AFpytorch%E9%80%82%E9%85%8D/" /><link rel="stylesheet" href="/lib/normalize/normalize.min.css"><link rel="stylesheet" href="/css/style.min.css"><link rel="stylesheet" href="/lib/fontawesome-free/all.min.css"><link rel="stylesheet" href="/lib/animate/animate.min.css"><script type="application/ld+json">
+        <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png"><link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png"><link rel="manifest" href="/site.webmanifest"><link rel="canonical" href="http://example.org/posts/post3/pytorch_tensor_impl/" /><link rel="prev" href="http://example.org/posts/post2/%E9%9D%9Egpu%E5%90%8E%E7%AB%AFpytorch%E9%80%82%E9%85%8D/" /><link rel="next" href="http://example.org/posts/post4/post/" /><link rel="stylesheet" href="/lib/normalize/normalize.min.css"><link rel="stylesheet" href="/css/style.min.css"><link rel="stylesheet" href="/lib/fontawesome-free/all.min.css"><link rel="stylesheet" href="/lib/animate/animate.min.css"><script type="application/ld+json">
     {
         "@context": "http://schema.org",
         "@type": "BlogPosting",
@@ -29,7 +29,7 @@
         "mainEntityOfPage": {
             "@type": "WebPage",
             "@id": "http:\/\/example.org\/posts\/post3\/pytorch_tensor_impl\/"
-        },"genre": "posts","keywords": "Pytorch, Pytorch C\u002b\u002b core","wordcount":  1294 ,
+        },"genre": "posts","keywords": "Pytorch, Pytorch C\u002b\u002b core","wordcount":  2196 ,
         "url": "http:\/\/example.org\/posts\/post3\/pytorch_tensor_impl\/","datePublished": "2021-06-20T15:10:26+08:00","dateModified": "2021-06-20T15:10:26+08:00","publisher": {
             "@type": "Organization",
             "name": "ykddd"},"author": {
@@ -79,8 +79,8 @@
             <div class="toc-content" id="toc-content-auto"></div>
         </div><article class="page single"><h1 class="single-title animated flipInX">Pytorch Tensor 实现解析</h1><div class="post-meta">
             <div class="post-meta-line"><span class="post-author"><a href="/" title="Author" rel=" author" class="author"><i class="fas fa-user-circle fa-fw"></i>ykddd</a></span></div>
-            <div class="post-meta-line"><i class="far fa-calendar-alt fa-fw"></i>&nbsp;<time datetime="2021-06-20">2021-06-20</time>&nbsp;<i class="fas fa-pencil-alt fa-fw"></i>&nbsp;约 1294 字&nbsp;
-                <i class="far fa-clock fa-fw"></i>&nbsp;预计阅读 3 分钟&nbsp;</div>
+            <div class="post-meta-line"><i class="far fa-calendar-alt fa-fw"></i>&nbsp;<time datetime="2021-06-20">2021-06-20</time>&nbsp;<i class="fas fa-pencil-alt fa-fw"></i>&nbsp;约 2196 字&nbsp;
+                <i class="far fa-clock fa-fw"></i>&nbsp;预计阅读 5 分钟&nbsp;</div>
         </div><div class="details toc" id="toc-static"  kept="">
                 <div class="details-summary toc-title">
                     <span>目录</span>
@@ -92,6 +92,7 @@
     <li><a href="#storageimpl">StorageImpl</a></li>
     <li><a href="#storage">Storage</a></li>
     <li><a href="#tensorimpl">TensorImpl</a></li>
+    <li><a href="#tensor">Tensor</a></li>
   </ul>
 </nav></div>
             </div><div class="content" id="content"><h1 id="前言">前言</h1>
@@ -174,6 +175,64 @@ Storage唯一的成员变量是</p>
 具体的接口有兴趣可以研究，就不一一赘述。</p>
 <h2 id="tensorimpl">TensorImpl</h2>
 <p>c10/core/TensorImpl.h</p>
+<p>TenorImpl已经和我们在Python层看到的Tensor产生了联系，TensorImpl的尾部有这样一个断言</p>
+<pre><code>static_assert(
+    sizeof(void*) != sizeof(int64_t) || // if 64-bit...
+        sizeof(TensorImpl) == sizeof(int64_t) * 24,
+    &quot;You changed the size of TensorImpl on 64-bit arch.&quot;
+    &quot;See Note [TensorImpl size constraints] on how to proceed.&quot;);
+</code></pre><p>这个断言将TensorImpl结构体限制在了8*24字节，Pytorch代码中说这是因为在facebook的生产环境中会出现400百万的livetensor，这也导致了如果我们在TensorImpl中增加了一个64-bit的字段，都有可能让内存增加3.2G。当前TensorImpl中有如下成员</p>
+<pre><code>//    vtable pointer
+//    strong refcount           TODO: pack these into one word
+//    weak refcount
+//    storage pointer
+//    autograd metadata pointer
+//    named tensor metadata pointer
+//    version counter pointer
+//    Python interpreter pointer
+//    PyObject pointer
+//    SizesAndStrides size/pointer
+//    SizesAndStrides sizes (pre-allocated 0)
+//    SizesAndStrides sizes (pre-allocated 1)
+//    SizesAndStrides sizes (pre-allocated 2)
+//    SizesAndStrides sizes (pre-allocated 3)
+//    SizesAndStrides sizes (pre-allocated 4)
+//    SizesAndStrides strides (pre-allocated 0)
+//    SizesAndStrides strides (pre-allocated 1)
+//    SizesAndStrides strides (pre-allocated 2)
+//    SizesAndStrides strides (pre-allocated 3)
+//    SizesAndStrides strides (pre-allocated 4)
+//    storage offset
+//    numel
+//    data type, device, is_contiguous, storage_access_should_throw_, bitfields
+//    DispatchKeySet
+</code></pre><p>我们可以看到一个storage pointer，其他的都是为了保存当前Tensor的表示层信息strides，sizes，numel，以及一些自动微分，版本控制信息，还有一个PyObject pointer用于与Python层产生联系。<br>
+我们在Pytorch源码中搜索，其实还可以看到很多其他的TensorImpl，如SparseCsrTensorImpl，QTensorImpl。具体用处大家可以自行了解，但是我们可以以QTensorImpl为例，看一下如何扩展TensorImpl。</p>
+<p><img
+        class="lazyload"
+        src="/svg/loading.min.svg"
+        data-src="/posts/post3/qtensorimpl.png"
+        data-srcset="/posts/post3/qtensorimpl.png, /posts/post3/qtensorimpl.png 1.5x, /posts/post3/qtensorimpl.png 2x"
+        data-sizes="auto"
+        alt="/posts/post3/qtensorimpl.png"
+        title="/posts/post3/qtensorimpl.png" /></p>
+<p>QtensorImpl继承与TensorImpl，但是它增加了一个字段  QuantizerPtr quantizer_;如何保证这个字段在以父类指针形式之间拷贝不丢失呢？
+<img
+        class="lazyload"
+        src="/svg/loading.min.svg"
+        data-src="/posts/post3/shadowcopy.png"
+        data-srcset="/posts/post3/shadowcopy.png, /posts/post3/shadowcopy.png 1.5x, /posts/post3/shadowcopy.png 2x"
+        data-sizes="auto"
+        alt="/posts/post3/shadowcopy.png"
+        title="/posts/post3/shadowcopy.png" /></p>
+<p>pytorch注明说，在他们希望两个variable共享相同的tensorImpl时，他们会调用shallow_copy_and_detach和shallow_copy_from这两个函数。</p>
+<div class="highlight"><pre class="chroma"><code class="language-C++" data-lang="C++">  <span class="c1">// 1. `var_detached = var.detach()` uses `shallow_copy_and_detach()` to create
+</span><span class="c1"></span>  <span class="c1">// `var_detached` that shares the same tensor metadata with `var`, but with a
+</span><span class="c1"></span>  <span class="c1">// completely new autograd history.
+</span><span class="c1"></span>  <span class="c1">// 2. `var.set_data(tensor)` uses `shallow_copy_from()` to copy tensor
+</span><span class="c1"></span>  <span class="c1">// metadata from `tensor` into `var`, while keeping `var`&#39;s original // AutogradMeta.
+</span></code></pre></div><p>那么如果你需要实现一个自己的特定的XTensorImpl，在继承TensorImpl的同时，你需要重载父类的这个虚函数。这样在调用detach和set_data时你才能不丢失存储于XTensorImpl的特殊信息。</p>
+<h2 id="tensor">Tensor</h2>
 <p>未完待续</p>
 </div><div class="post-footer" id="post-footer">
     <div class="post-info">
@@ -198,7 +257,8 @@ Storage唯一的成员变量是</p>
         </section>
     </div>
 
-    <div class="post-nav"><a href="/posts/post2/%E9%9D%9Egpu%E5%90%8E%E7%AB%AFpytorch%E9%80%82%E9%85%8D/" class="prev" rel="prev" title="非GPU后端Pytorch适配技术分析"><i class="fas fa-angle-left fa-fw"></i>非GPU后端Pytorch适配技术分析</a></div>
+    <div class="post-nav"><a href="/posts/post2/%E9%9D%9Egpu%E5%90%8E%E7%AB%AFpytorch%E9%80%82%E9%85%8D/" class="prev" rel="prev" title="非GPU后端Pytorch适配技术分析"><i class="fas fa-angle-left fa-fw"></i>非GPU后端Pytorch适配技术分析</a>
+            <a href="/posts/post4/post/" class="next" rel="next" title="CUDA学习笔记">CUDA学习笔记<i class="fas fa-angle-right fa-fw"></i></a></div>
 </div>
 </article></div>
             </main><footer class="footer">
