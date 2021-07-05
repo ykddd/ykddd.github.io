@@ -5,8 +5,8 @@
         <meta name="viewport" content="width=device-width, initial-scale=1">
         <meta name="robots" content="noodp" />
         <meta http-equiv="X-UA-Compatible" content="IE=edge, chrome=1">
-        <title>CUDA学习笔记 - ykddd&#39;s blog</title><meta name="Description" content=""><meta property="og:title" content="CUDA学习笔记" />
-<meta property="og:description" content="cuda学习笔记 并行计算基础知识 第一章节主要是风辰大佬的《并行算法设计与性能优化》这本书的笔记 基础概念 多核、多路、众核 同一个芯片多个核心为多" />
+        <title>《并行算法设计与性能优化》学习笔记 - ykddd&#39;s blog</title><meta name="Description" content=""><meta property="og:title" content="《并行算法设计与性能优化》学习笔记" />
+<meta property="og:description" content="cuda学习笔记 本文主要是风辰大佬的《并行算法设计与性能优化》这本书的笔记 并行计算基础知识 基础概念 多核、多路、众核 同一个芯片多个核心为多核，" />
 <meta property="og:type" content="article" />
 <meta property="og:url" content="http://example.org/posts/post4/post/" /><meta property="og:image" content="http://example.org/logo.png"/><meta property="article:section" content="posts" />
 <meta property="article:published_time" content="2021-06-30T22:01:33&#43;08:00" />
@@ -15,21 +15,21 @@
 <meta name="twitter:card" content="summary_large_image"/>
 <meta name="twitter:image" content="http://example.org/logo.png"/>
 
-<meta name="twitter:title" content="CUDA学习笔记"/>
-<meta name="twitter:description" content="cuda学习笔记 并行计算基础知识 第一章节主要是风辰大佬的《并行算法设计与性能优化》这本书的笔记 基础概念 多核、多路、众核 同一个芯片多个核心为多"/>
+<meta name="twitter:title" content="《并行算法设计与性能优化》学习笔记"/>
+<meta name="twitter:description" content="cuda学习笔记 本文主要是风辰大佬的《并行算法设计与性能优化》这本书的笔记 并行计算基础知识 基础概念 多核、多路、众核 同一个芯片多个核心为多核，"/>
 <meta name="application-name" content="ykddd&#39;s blog">
 <meta name="apple-mobile-web-app-title" content="ykddd&#39;s blog"><link rel="shortcut icon" type="image/x-icon" href="/favicon.ico" />
         <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
-        <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png"><link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png"><link rel="manifest" href="/site.webmanifest"><link rel="canonical" href="http://example.org/posts/post4/post/" /><link rel="prev" href="http://example.org/posts/post3/pytorch_tensor_impl/" /><link rel="stylesheet" href="/lib/normalize/normalize.min.css"><link rel="stylesheet" href="/css/style.min.css"><link rel="stylesheet" href="/lib/fontawesome-free/all.min.css"><link rel="stylesheet" href="/lib/animate/animate.min.css"><script type="application/ld+json">
+        <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png"><link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png"><link rel="manifest" href="/site.webmanifest"><link rel="canonical" href="http://example.org/posts/post4/post/" /><link rel="prev" href="http://example.org/posts/post3/pytorch_tensor_impl/" /><link rel="next" href="http://example.org/posts/post5/post/" /><link rel="stylesheet" href="/lib/normalize/normalize.min.css"><link rel="stylesheet" href="/css/style.min.css"><link rel="stylesheet" href="/lib/fontawesome-free/all.min.css"><link rel="stylesheet" href="/lib/animate/animate.min.css"><script type="application/ld+json">
     {
         "@context": "http://schema.org",
         "@type": "BlogPosting",
-        "headline": "CUDA学习笔记",
+        "headline": "《并行算法设计与性能优化》学习笔记",
         "inLanguage": "zh-CN",
         "mainEntityOfPage": {
             "@type": "WebPage",
             "@id": "http:\/\/example.org\/posts\/post4\/post\/"
-        },"genre": "posts","wordcount":  1169 ,
+        },"genre": "posts","keywords": "并行计算, 代码优化","wordcount":  1290 ,
         "url": "http:\/\/example.org\/posts\/post4\/post\/","datePublished": "2021-06-30T22:01:33+08:00","dateModified": "2021-06-30T22:01:33+08:00","publisher": {
             "@type": "Organization",
             "name": "ykddd"},"author": {
@@ -77,9 +77,9 @@
                 <div class="container"><div class="toc" id="toc-auto">
             <h2 class="toc-title">目录</h2>
             <div class="toc-content" id="toc-content-auto"></div>
-        </div><article class="page single"><h1 class="single-title animated flipInX">CUDA学习笔记</h1><div class="post-meta">
+        </div><article class="page single"><h1 class="single-title animated flipInX">《并行算法设计与性能优化》学习笔记</h1><div class="post-meta">
             <div class="post-meta-line"><span class="post-author"><a href="/" title="Author" rel=" author" class="author"><i class="fas fa-user-circle fa-fw"></i>ykddd</a></span></div>
-            <div class="post-meta-line"><i class="far fa-calendar-alt fa-fw"></i>&nbsp;<time datetime="2021-06-30">2021-06-30</time>&nbsp;<i class="fas fa-pencil-alt fa-fw"></i>&nbsp;约 1169 字&nbsp;
+            <div class="post-meta-line"><i class="far fa-calendar-alt fa-fw"></i>&nbsp;<time datetime="2021-06-30">2021-06-30</time>&nbsp;<i class="fas fa-pencil-alt fa-fw"></i>&nbsp;约 1290 字&nbsp;
                 <i class="far fa-clock fa-fw"></i>&nbsp;预计阅读 3 分钟&nbsp;</div>
         </div><div class="details toc" id="toc-static"  kept="">
                 <div class="details-summary toc-title">
@@ -91,15 +91,16 @@
     <li><a href="#并行计算基础知识">并行计算基础知识</a>
       <ul>
         <li><a href="#基础概念">基础概念</a></li>
-        <li><a href="#性能度量">性能度量</a></li>
-        <li><a href="#串行代码优化">串行代码优化</a></li>
       </ul>
     </li>
+    <li><a href="#性能度量">性能度量</a></li>
+    <li><a href="#串行代码优化">串行代码优化</a></li>
+    <li><a href="#并行代码优化">并行代码优化</a></li>
   </ul>
 </nav></div>
             </div><div class="content" id="content"><h1 id="cuda学习笔记">cuda学习笔记</h1>
+<p>本文主要是风辰大佬的《并行算法设计与性能优化》这本书的笔记</p>
 <h2 id="并行计算基础知识">并行计算基础知识</h2>
-<p>第一章节主要是风辰大佬的《并行算法设计与性能优化》这本书的笔记</p>
 <h3 id="基础概念">基础概念</h3>
 <ul>
 <li>
@@ -139,7 +140,7 @@ A data：Intel Haswell cpu：一级缓存大小为32kb，延迟为3个时钟周�
 核心访问离其近的内存延迟较小</p>
 </li>
 </ul>
-<h3 id="性能度量">性能度量</h3>
+<h2 id="性能度量">性能度量</h2>
 <ul>
 <li>度量标准：<br>
 1、时间<br>
@@ -149,7 +150,7 @@ A data：Intel Haswell cpu：一级缓存大小为32kb，延迟为3个时钟周�
 5、吞吐量，A，每时钟周期指令数量（IPC）B，每秒执行指令数量<br>
 6、little定律：发挥硬件的某种指令的计算能力所需要的并行度等于指令的延迟乘以指令的吞吐量。</li>
 </ul>
-<h3 id="串行代码优化">串行代码优化</h3>
+<h2 id="串行代码优化">串行代码优化</h2>
 <ul>
 <li>受限指针<br>
 受限指针表示该指针不会和其他指针存在存储器别名<br>
@@ -219,6 +220,30 @@ C语言中数字是以行为主序存放的，而Fortran中则是以列为主序
 位运算最多只要一个周期，乘法需要三个周期，除法十几个，模余需要几十上百个</p>
 </li>
 </ul>
+<h2 id="并行代码优化">并行代码优化</h2>
+<ul>
+<li>
+<p>MPI（消息传递接口）<br>
+主要用于分布式存储的并行机。</p>
+</li>
+<li>
+<p>OpenMp<br>
+Open Multi-Processing，用于共享存储器的并行环境。</p>
+</li>
+<li>
+<p>fork/pthread</p>
+</li>
+<li>
+<p>CUDA</p>
+</li>
+<li>
+<p>OpenCL</p>
+</li>
+<li>
+<p>volatile<br>
+不将其保存在缓存中，每次读的时候都直接去该变量的内存地址去读，每次写也是。可以避免寄存器或缓存对内存读写的优化。</p>
+</li>
+</ul>
 </div><div class="post-footer" id="post-footer">
     <div class="post-info">
         <div class="post-info-line">
@@ -236,13 +261,14 @@ C语言中数字是以行为主序存放的，而Fortran中则是以列为主序
     </div>
 
     <div class="post-info-more">
-        <section class="post-tags"></section>
+        <section class="post-tags"><i class="fas fa-tags fa-fw"></i>&nbsp;<a href="/tags/%E5%B9%B6%E8%A1%8C%E8%AE%A1%E7%AE%97/">并行计算</a>,&nbsp;<a href="/tags/%E4%BB%A3%E7%A0%81%E4%BC%98%E5%8C%96/">代码优化</a></section>
         <section>
             <span><a href="javascript:void(0);" onclick="window.history.back();">返回</a></span>&nbsp;|&nbsp;<span><a href="/">主页</a></span>
         </section>
     </div>
 
-    <div class="post-nav"><a href="/posts/post3/pytorch_tensor_impl/" class="prev" rel="prev" title="Pytorch Tensor 实现解析"><i class="fas fa-angle-left fa-fw"></i>Pytorch Tensor 实现解析</a></div>
+    <div class="post-nav"><a href="/posts/post3/pytorch_tensor_impl/" class="prev" rel="prev" title="Pytorch Tensor 实现解析"><i class="fas fa-angle-left fa-fw"></i>Pytorch Tensor 实现解析</a>
+            <a href="/posts/post5/post/" class="next" rel="next" title="xla/pytorch代码分析">xla/pytorch代码分析<i class="fas fa-angle-right fa-fw"></i></a></div>
 </div>
 </article></div>
             </main><footer class="footer">

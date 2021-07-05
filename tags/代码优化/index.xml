@@ -1,0 +1,14 @@
+<rss xmlns:atom="http://www.w3.org/2005/Atom" version="2.0">
+    <channel>
+        <title>代码优化 - 标签 - ykddd&#39;s blog</title>
+        <link>http://example.org/tags/%E4%BB%A3%E7%A0%81%E4%BC%98%E5%8C%96/</link>
+        <description>代码优化 - 标签 - ykddd&#39;s blog</description>
+        <generator>Hugo -- gohugo.io</generator><language>zh-CN</language><lastBuildDate>Wed, 30 Jun 2021 22:01:33 &#43;0800</lastBuildDate><atom:link href="http://example.org/tags/%E4%BB%A3%E7%A0%81%E4%BC%98%E5%8C%96/" rel="self" type="application/rss+xml" /><item>
+    <title>《并行算法设计与性能优化》学习笔记</title>
+    <link>http://example.org/posts/post4/post/</link>
+    <pubDate>Wed, 30 Jun 2021 22:01:33 &#43;0800</pubDate>
+    <author>作者</author>
+    <guid>http://example.org/posts/post4/post/</guid>
+    <description><![CDATA[cuda学习笔记 本文主要是风辰大佬的《并行算法设计与性能优化》这本书的笔记 并行计算基础知识 基础概念 多核、多路、众核 同一个芯片多个核心为多核，]]></description>
+</item></channel>
+</rss>

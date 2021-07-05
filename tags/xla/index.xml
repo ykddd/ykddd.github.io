@@ -3,7 +3,14 @@
         <title>XLA - 标签 - ykddd&#39;s blog</title>
         <link>http://example.org/tags/xla/</link>
         <description>XLA - 标签 - ykddd&#39;s blog</description>
-        <generator>Hugo -- gohugo.io</generator><language>zh-CN</language><lastBuildDate>Sun, 20 Jun 2021 14:45:07 &#43;0800</lastBuildDate><atom:link href="http://example.org/tags/xla/" rel="self" type="application/rss+xml" /><item>
+        <generator>Hugo -- gohugo.io</generator><language>zh-CN</language><lastBuildDate>Mon, 05 Jul 2021 22:44:11 &#43;0800</lastBuildDate><atom:link href="http://example.org/tags/xla/" rel="self" type="application/rss+xml" /><item>
+    <title>xla/pytorch代码分析</title>
+    <link>http://example.org/posts/post5/post/</link>
+    <pubDate>Mon, 05 Jul 2021 22:44:11 &#43;0800</pubDate>
+    <author>作者</author>
+    <guid>http://example.org/posts/post5/post/</guid>
+    <description><![CDATA[前言 前面的一篇文章《非GPU后端Pytorch适配技术分析》说到xla/pytorch对于Pytorch的适配，那么本文就主要说一些笔者对于]]></description>
+</item><item>
     <title>非GPU后端Pytorch适配技术分析</title>
     <link>http://example.org/posts/post2/%E9%9D%9Egpu%E5%90%8E%E7%AB%AFpytorch%E9%80%82%E9%85%8D/</link>
     <pubDate>Sun, 20 Jun 2021 14:45:07 &#43;0800</pubDate>

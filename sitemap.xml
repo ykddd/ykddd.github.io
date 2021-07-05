@@ -2,17 +2,21 @@
     xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
     xmlns:xhtml="http://www.w3.org/1999/xhtml"
     ><url>
+            <loc>http://example.org/posts/post5/post/</loc><lastmod>2021-07-05T22:44:11&#43;08:00</lastmod></url><url>
             <loc>http://example.org/posts/post4/post/</loc><lastmod>2021-06-30T22:01:33&#43;08:00</lastmod></url><url>
             <loc>http://example.org/posts/post3/pytorch_tensor_impl/</loc><lastmod>2021-06-20T15:10:26&#43;08:00</lastmod></url><url>
             <loc>http://example.org/posts/post2/%E9%9D%9Egpu%E5%90%8E%E7%AB%AFpytorch%E9%80%82%E9%85%8D/</loc><lastmod>2021-06-20T14:45:07&#43;08:00</lastmod></url><url>
             <loc>http://example.org/posts/post1/%E4%B8%80%E5%BE%80%E6%97%A0%E5%89%8D%E8%AF%BB%E5%90%8E%E6%84%9F%E4%BB%A5%E5%8F%8A%E6%AD%A3%E5%BC%8F%E4%B8%8A%E7%8F%AD%E4%B8%80%E5%91%A8%E5%B9%B4%E6%84%9F%E6%82%9F/</loc><lastmod>2021-05-01T22:56:55&#43;08:00</lastmod></url><url>
-            <loc>http://example.org/posts/</loc><lastmod>2021-06-30T22:01:33&#43;08:00</lastmod></url><url>
-            <loc>http://example.org/</loc><lastmod>2021-06-30T22:01:33&#43;08:00</lastmod></url><url>
-            <loc>http://example.org/tags/pytorch/</loc><lastmod>2021-06-20T15:10:26&#43;08:00</lastmod></url><url>
+            <loc>http://example.org/posts/</loc><lastmod>2021-07-05T22:44:11&#43;08:00</lastmod></url><url>
+            <loc>http://example.org/tags/pytorch/</loc><lastmod>2021-07-05T22:44:11&#43;08:00</lastmod></url><url>
+            <loc>http://example.org/tags/</loc><lastmod>2021-07-05T22:44:11&#43;08:00</lastmod></url><url>
+            <loc>http://example.org/tags/tpu/</loc><lastmod>2021-07-05T22:44:11&#43;08:00</lastmod></url><url>
+            <loc>http://example.org/tags/xla/</loc><lastmod>2021-07-05T22:44:11&#43;08:00</lastmod></url><url>
+            <loc>http://example.org/</loc><lastmod>2021-07-05T22:44:11&#43;08:00</lastmod></url><url>
+            <loc>http://example.org/tags/%E4%BB%A3%E7%A0%81%E4%BC%98%E5%8C%96/</loc><lastmod>2021-06-30T22:01:33&#43;08:00</lastmod></url><url>
+            <loc>http://example.org/tags/%E5%B9%B6%E8%A1%8C%E8%AE%A1%E7%AE%97/</loc><lastmod>2021-06-30T22:01:33&#43;08:00</lastmod></url><url>
             <loc>http://example.org/tags/pytorch-c&#43;&#43;-core/</loc><lastmod>2021-06-20T15:10:26&#43;08:00</lastmod></url><url>
-            <loc>http://example.org/tags/</loc><lastmod>2021-06-20T15:10:26&#43;08:00</lastmod></url><url>
             <loc>http://example.org/tags/graphcore/</loc><lastmod>2021-06-20T14:45:07&#43;08:00</lastmod></url><url>
-            <loc>http://example.org/tags/xla/</loc><lastmod>2021-06-20T14:45:07&#43;08:00</lastmod></url><url>
             <loc>http://example.org/tags/%E5%AF%92%E6%AD%A6%E7%BA%AA/</loc><lastmod>2021-06-20T14:45:07&#43;08:00</lastmod></url><url>
             <loc>http://example.org/tags/guaguagua%E7%B3%BB%E5%88%97/</loc><lastmod>2021-05-01T22:56:55&#43;08:00</lastmod></url><url>
             <loc>http://example.org/about/</loc><lastmod>2019-08-02T11:04:49&#43;08:00</lastmod></url><url>
