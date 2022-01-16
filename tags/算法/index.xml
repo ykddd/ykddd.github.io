@@ -1,0 +1,14 @@
+<rss xmlns:atom="http://www.w3.org/2005/Atom" version="2.0">
+    <channel>
+        <title>算法 - 标签 - ykddd&#39;s blog</title>
+        <link>http://example.org/tags/%E7%AE%97%E6%B3%95/</link>
+        <description>算法 - 标签 - ykddd&#39;s blog</description>
+        <generator>Hugo -- gohugo.io</generator><language>zh-CN</language><lastBuildDate>Sun, 16 Jan 2022 11:27:43 &#43;0800</lastBuildDate><atom:link href="http://example.org/tags/%E7%AE%97%E6%B3%95/" rel="self" type="application/rss+xml" /><item>
+    <title>蓄水池抽样算法简介</title>
+    <link>http://example.org/posts/post3/%E8%93%84%E6%B0%B4%E6%B1%A0%E6%8A%BD%E6%A0%B7%E7%AE%97%E6%B3%95%E7%AE%80%E4%BB%8B/</link>
+    <pubDate>Sun, 16 Jan 2022 11:27:43 &#43;0800</pubDate>
+    <author>作者</author>
+    <guid>http://example.org/posts/post3/%E8%93%84%E6%B0%B4%E6%B1%A0%E6%8A%BD%E6%A0%B7%E7%AE%97%E6%B3%95%E7%AE%80%E4%BB%8B/</guid>
+    <description><![CDATA[前言 蓄水池抽样算法是一个常见算法，这里做一个证明，巩固一下。 蓄水池抽样算法解决的问题是 给定一个数据流，数据流长度N很大，且N直到处理完所有数]]></description>
+</item></channel>
+</rss>

@@ -3,7 +3,21 @@
         <title>Tags - 标签 - ykddd&#39;s blog</title>
         <link>http://example.org/tags/</link>
         <description>Tags - 标签 - ykddd&#39;s blog</description>
-        <generator>Hugo -- gohugo.io</generator><language>zh-CN</language><lastBuildDate>Thu, 13 Jan 2022 21:57:54 &#43;0800</lastBuildDate><atom:link href="http://example.org/tags/" rel="self" type="application/rss+xml" /><item>
+        <generator>Hugo -- gohugo.io</generator><language>zh-CN</language><lastBuildDate>Sun, 16 Jan 2022 11:27:43 &#43;0800</lastBuildDate><atom:link href="http://example.org/tags/" rel="self" type="application/rss+xml" /><item>
+    <title>算法</title>
+    <link>http://example.org/tags/%E7%AE%97%E6%B3%95/</link>
+    <pubDate>Sun, 16 Jan 2022 11:27:43 &#43;0800</pubDate>
+    <author>作者</author>
+    <guid>http://example.org/tags/%E7%AE%97%E6%B3%95/</guid>
+    <description><![CDATA[]]></description>
+</item><item>
+    <title>蓄水池抽样</title>
+    <link>http://example.org/tags/%E8%93%84%E6%B0%B4%E6%B1%A0%E6%8A%BD%E6%A0%B7/</link>
+    <pubDate>Sun, 16 Jan 2022 11:27:43 &#43;0800</pubDate>
+    <author>作者</author>
+    <guid>http://example.org/tags/%E8%93%84%E6%B0%B4%E6%B1%A0%E6%8A%BD%E6%A0%B7/</guid>
+    <description><![CDATA[]]></description>
+</item><item>
     <title>contiguous</title>
     <link>http://example.org/tags/contiguous/</link>
     <pubDate>Thu, 13 Jan 2022 21:57:54 &#43;0800</pubDate>
